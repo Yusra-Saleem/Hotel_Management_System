@@ -10,6 +10,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum RoomStatus {
+  VACANT
+  OCCUPIED
+  DIRTY
+  OOO // Out of Order
+}
+
+enum HousekeepingStatus {
+  DIRTY
+  CLEANING
+  INSPECTED
+  VACANT
+}
+
+model RoomType {
+  id            String     @id @default(cuid())
+  name          String     @unique
+  description   String?
+  base_rate     Float
+  max_occupancy Int
+  amenities     String[]   @default([])
+  rooms         Room[]
+  ratePlans     RatePlan[]
+}
+
+model Room {
+  id            String     @id @default(cuid())
+  room_number   String     @unique
+  typeId        String
+  roomType      RoomType   @relation(fields: [typeId], references: [id])
+  floor         Int
+  features      String[]   @default([])
+  status        RoomStatus @default(VACANT)
+  max_occupancy Int
+  housekeepingTasks HousekeepingTask[]
+}
+
+model RatePlan {
+  id            String     @id @default(cuid())
+  name          String
+  roomTypeId    String
+  roomType      RoomType   @relation(fields: [roomTypeId], references: [id])
+  refundable    Boolean    @default(false)
+  seasonal_rate Json[]     @default([]) // [{ startDate: "YYYY-MM-DD", endDate: "YYYY-MM-DD", price: 100.00 }]
+  extra_bed_policy Json?   // { price: 20.00, max_beds: 2 }
+
+  @@unique([name, roomTypeId])
+}
+
+model HousekeepingTask {
+  id              String             @id @default(cuid())
+  roomId          String
+  room            Room               @relation(fields: [roomId], references: [id])
+  assignedToStaffId String?
+  assignedToStaff User?              @relation(fields: [assignedToStaffId], references: [id])
+  status          HousekeepingStatus @default(DIRTY)
+  notes           String?
+  timestamp       DateTime           @default(now())
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -51,6 +111,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   role          Role      @default(GUEST)
+  housekeepingTasks HousekeepingTask[]
 }
 
 model VerificationToken {

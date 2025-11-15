@@ -22,6 +22,21 @@ export default function AdminLayout({
             <li className="p-4 hover:bg-gray-700">
               <Link href="/admin/audit-log">Audit Log</Link>
             </li>
+            <li className="p-4 hover:bg-gray-700">
+              <Link href="/admin/rooms">Rooms</Link>
+            </li>
+            <li className="p-4 hover:bg-gray-700">
+              <Link href="/admin/room-types">Room Types</Link>
+            </li>
+            <li className="p-4 hover:bg-gray-700">
+              <Link href="/admin/rate-plans">Rate Plans</Link>
+            </li>
+            <li className="p-4 hover:bg-gray-700">
+              <Link href="/admin/availability">Availability Calendar</Link>
+            </li>
+            <li className="p-4 hover:bg-gray-700">
+              <Link href="/admin/housekeeping">Housekeeping</Link>
+            </li>
           </ul>
         </nav>
       </aside>
